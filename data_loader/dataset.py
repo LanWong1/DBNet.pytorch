@@ -107,6 +107,7 @@ if __name__ == '__main__':
     # data_list = [(r'E:/zj/dataset/icdar2015/train/img/img_15.jpg', 'E:/zj/dataset/icdar2015/train/gt/gt_img_15.txt')]
     train_data = ICDAR2015Dataset(data_path=dataset_args.pop('data_path'), transform=transforms.ToTensor(), **dataset_args)
     train_loader = DataLoader(dataset=train_data, batch_size=1, shuffle=True, num_workers=0)
+
     for i, data in enumerate(tqdm(train_loader)):
         # img = data['img']
         # shrink_label = data['shrink_map']

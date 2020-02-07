@@ -46,6 +46,8 @@ class Pytorch_model:
         checkpoint = torch.load(model_path, map_location=self.device)
 
         config = checkpoint['config']
+        # add by IanWong 2020/2/6 to see what config is
+        #print(checkpoint)
         config['arch']['args']['pretrained'] = False
         self.model = get_model(config['arch'])
         self.post_process = get_post_processing(config['post_processing'])
@@ -53,7 +55,6 @@ class Pytorch_model:
         self.model.load_state_dict(checkpoint['state_dict'])
         self.model.to(self.device)
         self.model.eval()
-
         self.transform = []
         for t in config['dataset']['train']['dataset']['args']['transforms']:
             if t['type'] in ['ToTensor', 'Normalize']:
@@ -105,12 +106,12 @@ class Pytorch_model:
 def init_args():
     import argparse
     parser = argparse.ArgumentParser(description='DBNet.pytorch')
-    parser.add_argument('--model_path', default='model_best.pth', type=str)
+    parser.add_argument('--model_path', default='../trained_model/DBNet_shufflenetv2.pth', type=str)
     parser.add_argument('--input_folder', default='./input', type=str, help='img path for predict')
     parser.add_argument('--output_folder', default='./input', type=str, help='img path for predict')
     parser.add_argument('--polygon', action='store_true', help='output polygon or box')
     parser.add_argument('--show', action='store_true', help='show result')
-    parser.add_argument('--save_resut', action='store_true', help='save box and score to txt file')
+    parser.add_argument('--save_result', action='store_true', help='save box and score to txt file')
     args = parser.parse_args()
     return args
 
@@ -122,8 +123,7 @@ if __name__ == '__main__':
     from utils.util import show_img, draw_bbox, save_result, get_file_list
 
     args = init_args()
-    print(args)
-    os.environ['CUDA_VISIBLE_DEVICES'] = str('0')
+    # os.environ['CUDA_VISIBLE_DEVICES'] = str('0')
     # 初始化网络
     model = Pytorch_model(args.model_path, gpu_id=0)
     img_folder = pathlib.Path(args.input_folder)
